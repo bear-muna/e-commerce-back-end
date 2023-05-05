@@ -52,8 +52,24 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   // update a tag's name by its `id` value
+  try {
+      const editTag = await Tag.update({
+      tag_name: req.body.tag_name,
+    }, {
+      where: {
+        id: req.params.id,
+      }
+    });
+    if (!editTag[0]) {
+      return res.status(404).json({ msg: "No tag with id exists in database" })
+    }
+    res.json(editTag);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: "Error occurred", error })
+  }
 });
 
 router.delete('/:id', (req, res) => {
